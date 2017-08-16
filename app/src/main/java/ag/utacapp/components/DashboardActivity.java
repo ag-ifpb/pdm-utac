@@ -1,9 +1,16 @@
 package ag.utacapp.components;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import ag.utacapp.R;
@@ -16,6 +23,7 @@ public class DashboardActivity extends AppCompatActivity implements LogoPanelPre
     private TextView tvUserName;
     private Button btTabList;
     private Button btTabMenu;
+    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +48,32 @@ public class DashboardActivity extends AppCompatActivity implements LogoPanelPre
         //
         String userName = getIntent().getStringExtra("username");
         setUserName(userName);
+        //
+        Log.d("AGDebug", "Registrando o broadcast");
+        IntentFilter intentFilter = new IntentFilter("ag.utacapp.UPDATE_LISTENER");
+        LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
+        broadcastManager.registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //
+                String name = intent.getStringExtra("name");
+                String message = intent.getStringExtra("latestmessage");
+                //
+                Log.d("AGDebug", "Recebendo última mensagem");
+                Log.d("AGDebug", "Name: " + name);
+                Log.d("AGDebug", "Message: " + message);
+                //
+                //TODO adicionar item no listview
+                //-- criar um item do listview
+                //-- popular o item
+                //-- adicionar no listview
+                //-- remover o primeiro quando houver 3
+            }
+        }, intentFilter);
+        //
+        Log.d("AGDebug", "Solicitando inicialização do serviço");
+        Intent intent = new Intent(this, UpdatingService.class);
+        startService(intent);
     }
 
     @Override
