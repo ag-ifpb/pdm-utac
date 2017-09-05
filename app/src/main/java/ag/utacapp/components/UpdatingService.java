@@ -23,42 +23,7 @@ public class UpdatingService extends IntentService {
 
     private void handleUpdating(){
         //
-        PNConfiguration pnConfiguration = new PNConfiguration();
-        pnConfiguration.setSubscribeKey("sub-c-2876554e-030b-11e5-897f-02ee2ddab7fe");
-        pnConfiguration.setSecure(false);
-        //
-        PubNub pubnub = new PubNub(pnConfiguration);
-        //
-        pubnub.addListener(new SubscribeCallback() {
-            @Override
-            public void status(PubNub pubnub, PNStatus status) {
-                Log.d("AGDebug", "Status: " + status.toString());
-            }
-            @Override
-            public void presence(PubNub pubnub, PNPresenceEventResult presence) {}
-            @Override
-            public void message(PubNub pubnub, PNMessageResult message) {
-                //log
-                Log.d("AGDebug", "Recebendo mensagem");
-                Log.d("AGDebug", "channel: " + message.getChannel());
-                Log.d("AGDebug", "message: " + message.getMessage());
-                Log.d("AGDebug", "timetoken: " + message.getTimetoken());
-                //recuperando dados
-                JsonElement element = message.getMessage();
-                JsonObject json = element.getAsJsonObject();
-                String name = json.get("name").getAsString();
-                String latestmessage = json.get("msg").getAsString();
-                //mensagem para broadcast
-                Intent msg = new Intent("ag.utacapp.UPDATE_LISTENER");
-                msg.putExtra("name", name);
-                msg.putExtra("latestmessage", latestmessage);
-                //enviando para broadcast
-                Context ctx = getApplicationContext();
-                LocalBroadcastManager manager = LocalBroadcastManager.getInstance(ctx);
-                manager.sendBroadcast(msg);
-            }
-        });
-        pubnub.subscribe().channels(Arrays.asList("ifpb-pdm")).execute();
+
         Log.d("AGDebug", "Inscrição no canal 'ifpb-pdm");
     }
 

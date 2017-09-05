@@ -9,8 +9,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import ag.utacapp.R;
-import ag.utacapp.infra.AuthServiceImpl;
-import ag.utacapp.model.AuthService;
+import ag.utacapp.infra.AuthManagerImpl;
+import ag.utacapp.model.AuthManager;
 import ag.utacapp.model.AuthServiceException;
 import ag.utacapp.presenter.LoginPresenter;
 
@@ -49,9 +49,9 @@ public class LoginActivity extends AppCompatActivity implements LoginPresenter {
     public void loginButtonClick() {
         String email = getEmail();
         String passwd = getPassword();
-        AuthService authService = new AuthServiceImpl();
+        AuthManager authManager = new AuthManagerImpl();
         try {
-            String name = authService.auth(email, passwd);
+            String name = authManager.auth(email, passwd);
             Intent intent = new Intent(this, DashboardActivity.class);
             intent.putExtra("username", name);
             startActivity(intent);
