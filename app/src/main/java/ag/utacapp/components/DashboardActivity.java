@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import ag.utacapp.R;
+import ag.utacapp.model.Message;
 import ag.utacapp.presenter.DasboardTabPresenter;
 import ag.utacapp.presenter.LatestMessagePresenter;
 import ag.utacapp.presenter.LogoPanelPresenter;
@@ -23,16 +24,21 @@ public class DashboardActivity extends AppCompatActivity implements LogoPanelPre
     private TextView tvUserName;
     private Button btTabList;
     private Button btTabMenu;
-    private ListView listView;
+    private ListView lvMsg;
+    private MessagesAdapter messagesAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-        //recuperar o controle dos componentes visuais
+        //recuperar as referências dos componentes visuais
         tvUserName = (TextView) findViewById(R.id.tvUserName);
         btTabList = (Button) findViewById(R.id.btTabList);
         btTabMenu = (Button) findViewById(R.id.btTabMenu);
+        lvMsg = (ListView) findViewById(R.id.lvMsg);
+        messagesAdapter = new MessagesAdapter();
+        lvMsg.setAdapter(messagesAdapter);
+        //define o comportamento de click para os botões (de tab)
         btTabList.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -45,34 +51,38 @@ public class DashboardActivity extends AppCompatActivity implements LogoPanelPre
                 goToMenuAction();
             }
         });
-        //
+        //recupera o nome do usuário resolvido no login
         String userName = getIntent().getStringExtra("username");
         setUserName(userName);
-        //
+        //log
         Log.d("AGDebug", "Registrando o broadcast");
+        //registra um callback (LocalBoradcastReceiver)
+        //para o recebimento de uma mensagem
         IntentFilter intentFilter = new IntentFilter("ag.utacapp.UPDATE_LISTENER");
         LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
         broadcastManager.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                //
+                //recupera o nome do usuário e a mensagem recebida
                 String name = intent.getStringExtra("name");
                 String message = intent.getStringExtra("latestmessage");
-                //
+                //log
                 Log.d("AGDebug", "Recebendo última mensagem");
                 Log.d("AGDebug", "Name: " + name);
                 Log.d("AGDebug", "Message: " + message);
-                //
-                //TODO adicionar item no listview
-                //-- criar um item do listview
-                //-- popular o item
-                //-- adicionar no listview
-                //-- remover o primeiro quando houver 3
+                //converter no objeto de mensagem
+                Message m = new Message();
+                m.setName(name);
+                m.setMessage(message);
+                //atualizar o listview
+                messagesAdapter.update(m);
+                lvMsg.invalidateViews();
             }
         }, intentFilter);
         //
         Log.d("AGDebug", "Solicitando inicialização do serviço");
         Intent intent = new Intent(this, UpdatingService.class);
+        intent.putExtra("name", userName);
         startService(intent);
     }
 

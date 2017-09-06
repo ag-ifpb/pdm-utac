@@ -80,7 +80,7 @@ public class PubNubClient {
         json.addProperty("name", name);
         json.addProperty("msg", msg);
         //
-        pubnub.publish().channel("chat");
+        pubnub.publish().channel("chat").message(json);
     }
 
 }

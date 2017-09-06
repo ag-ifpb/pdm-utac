@@ -5,9 +5,6 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-/**
- * Created by arigarcia on 6/13/17.
- */
 
 public class BoxComp extends LinearLayout {
     private ImageView img;

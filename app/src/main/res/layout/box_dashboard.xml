@@ -47,11 +47,12 @@
             android:visibility="gone">
 
             <!-- Conteúdo da aba Bate-Papo aqui -->
-            <TextView
-                android:textColor="#ffffff"
+            <ListView
+                android:id="@+id/lvMsg"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Aqui ficará o chat"/>
+                android:layout_height="match_parent">
+
+            </ListView>
 
         </LinearLayout>
 
@@ -124,6 +125,5 @@
         </LinearLayout>
 
     </FrameLayout>
-
 
 </LinearLayout>

@@ -10,12 +10,10 @@ import ag.utacapp.model.ChatManager;
 
 public class ChatManagerImpl extends Observable implements ChatManager {
     private final PubNubClient client;
-    private final Observer observer;
     private final String userName;
 
-    public ChatManagerImpl(String userName, Observer observer){
+    private ChatManagerImpl(String userName){
         this.userName = userName;
-        this.observer = observer;
         this.client = new PubNubClient();
     }
 
@@ -36,7 +34,26 @@ public class ChatManagerImpl extends Observable implements ChatManager {
 
     @Override
     public void receiveMessage(String name, String msg) {
-        observer.update(this, new String[]{name, msg});
+        setChanged();
+        notifyObservers(new String[]{name, msg});
     }
+
+    private static ChatManagerImpl instance = null;
+
+    public static void init(String userName){
+        instance = new ChatManagerImpl(userName);
+    }
+
+    public static ChatManagerImpl instance(Observer observer){
+        instance.addObserver(observer);
+        instance.registerLikeSubscriber();
+        return instance;
+    }
+
+    public static void clear(Observer observer){
+        instance.deleteObserver(observer);
+    }
+
+
 
 }

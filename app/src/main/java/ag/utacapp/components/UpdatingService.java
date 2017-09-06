@@ -16,25 +16,47 @@ import com.pubnub.api.models.consumer.pubsub.PNMessageResult;
 import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult;
 
 import java.util.Arrays;
+import java.util.Observable;
+import java.util.Observer;
+
+import ag.utacapp.infra.ChatManagerImpl;
 
 
-public class UpdatingService extends IntentService {
+public class UpdatingService extends IntentService implements Observer{
     private static final String ACTION_UPDATING = "ag.utacapp.service.action.UPDATING";
 
-    private void handleUpdating(){
-        //
-
-        Log.d("AGDebug", "Inscrição no canal 'ifpb-pdm");
-    }
+    private ChatManagerImpl instance;
 
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.d("AGDebug", "Inicializando  o serviço");
-        handleUpdating();
+        Log.d("AGDebug", "Registrando o serviço como observador do chat");
+        String userName = intent.getStringExtra("name");
+        //inicializando o singleton
+        ChatManagerImpl.init(userName);
+        //
+        instance = ChatManagerImpl.instance(this);
     }
 
     public UpdatingService() {
         super("UpdatingService");
+    }
+
+    @Override
+    public void update(Observable observable, Object o) {
+        //
+        Log.d("AGDebug", "Recevendo notificação do sujeito");
+        //
+        String[] datas = (String[]) o;
+        String nam = datas[0];
+        String msg = datas[1];
+        //
+        Intent intentMsg = new Intent("ag.utacapp.UPDATE_LISTENER");
+        intentMsg.putExtra("name", nam);
+        intentMsg.putExtra("latestmessage", msg);
+        //
+        LocalBroadcastManager lm = LocalBroadcastManager.getInstance(getApplicationContext());
+        lm.sendBroadcast(intentMsg);
     }
 
     public static void startUpdating(Context context) {

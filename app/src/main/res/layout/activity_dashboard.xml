@@ -12,5 +12,6 @@
 
     <include layout="@layout/box_dashboard" />
 
+    <include layout="@layout/comp_listview_item" android:visibility="gone" />
 
 </LinearLayout>
